@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}Диагностика{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-title">Диагностика</div>
+    <div class="text-muted">Быстрые проверки качества данных: связи словаря и обязательные поля.</div>
+</div>
+
+<div class="card">
+    <div class="card-title">Проверка связей</div>
+    <div class="grid grid-2">
+        <div><b>Осиротевшие значения:</b> {{ links.summary.senses_orphans }}</div>
+        <div><b>Осиротевшие фразы:</b> {{ links.summary.phrases_orphans }}</div>
+        <div><b>Осиротевшие примеры:</b> {{ links.summary.examples_orphans }}</div>
+        <div><b>Пустые поля:</b> {{ links.summary.empty_fields }}</div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-title">Статьи с пропущенными критичными полями (пример)</div>
+    <div class="text-muted">Найдено: {{ missing.count }}</div>
+    {% if missing.samples %}
+        <table class="table mt-2">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Лемма (сыр.)</th>
+                    <th>Лемма (норм.)</th>
+                    <th>Нет сырого текста</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in missing.samples[:50] %}
+                    <tr>
+                        <td class="mono">{{ row.entry_id }}</td>
+                        <td>{{ row.headword_raw or "—" }}</td>
+                        <td>{{ row.headword_norm or "—" }}</td>
+                        <td>{{ "да" if row.missing_raw_text else "нет" }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+</div>
+{% endblock %}

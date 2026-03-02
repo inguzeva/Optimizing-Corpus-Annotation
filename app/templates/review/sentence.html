@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Проверка предложения {{ sent.sent_id }}{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="flex space-between">
+        <div>
+            <div class="card-title">Предложение</div>
+            <div class="text-muted">
+                <span class="tag">ID {{ sent.sent_id }}</span>
+                {% if sent.covered %}<span class="tag">покрыто</span>{% endif %}
+                <span class="tag">совпадений {{ sent.hits_count }}</span>
+                <span class="tag">совпадений фраз {{ sent.phrase_hits_count }}</span>
+            </div>
+        </div>
+        <div class="flex">
+            <a class="tag" href="{{ url_for('review.review_queue') }}">К очереди</a>
+        </div>
+    </div>
+
+    <div class="mt-2">{{ sent.text }}</div>
+</div>
+
+<div class="card">
+    <div class="card-title">Токены</div>
+    {% include "components/token_grid.html" %}
+    <div class="mt-2 text-muted">Нажмите на токен, чтобы задать финальную метку.</div>
+</div>
+
+<div class="card">
+    <div class="card-title">Действия</div>
+    <div class="flex">
+        <form method="post" action="{{ url_for('review.confirm_sentence_all', sent_id=sent.sent_id) }}">
+            <button type="submit" class="secondary">Подтвердить все токены</button>
+        </form>
+        <form method="post" action="{{ url_for('review.reset_sentence_final', sent_id=sent.sent_id) }}">
+            <button type="submit" class="danger">Очистить финальные метки</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,37 @@
+<div class="token-grid">
+    {% for t in tokens %}
+        {% set final_lbl = (t.final_label or '').strip() %}
+        {% set weak_lbl = (t.weak_label or 'O').strip() %}
+        {% set model_lbl = (t.model_label or 'O').strip() %}
+        {% set weak_src = (t.weak_source or 'none').strip() %}
+
+        {% set mm_conf = t.multimodal_confidence if t.multimodal_confidence and t.multimodal_confidence > 0 else t.weak_confidence %}
+        {% set conf = t.model_confidence if t.model_confidence and t.model_confidence > 0 else mm_conf %}
+        {% set conf = conf or 0 %}
+
+        {% set label_show = final_lbl if final_lbl else (model_lbl if model_lbl != 'O' else weak_lbl) %}
+
+        {% set cls = 'token' %}
+        {% if final_lbl %}
+            {% set cls = cls + ' confirmed' %}
+        {% else %}
+            {% if label_show != 'O' and conf < 0.4 %}
+                {% set cls = cls + ' low-confidence' %}
+            {% endif %}
+            {% if model_lbl != 'O' and weak_lbl != 'O' and model_lbl != weak_lbl %}
+                {% set cls = cls + ' conflict' %}
+            {% endif %}
+        {% endif %}
+
+        <span class="{{ cls }}"
+              data-sent-id="{{ t.sent_id }}"
+              data-token-idx="{{ t.token_idx }}"
+              data-label="{{ label_show }}"
+              data-confidence="{{ '%.3f'|format(conf) }}"
+              title="источник={{ weak_src }}, текст={{ '%.3f'|format(t.text_confidence or 0) }}, pdf={{ '%.3f'|format(t.pdf_confidence or 0) }}, мультимод={{ '%.3f'|format(mm_conf or 0) }}">
+            <span class="tok">{{ t.token }}</span>
+            <span class="label">{{ label_show }}</span>
+            <span class="score">{{ '%.2f'|format(conf) }}</span>
+        </span>
+    {% endfor %}
+</div>

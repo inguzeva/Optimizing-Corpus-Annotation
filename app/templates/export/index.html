@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Экспорт{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-title">Экспорт</div>
+    <div class="text-muted">Сгенерированные файлы сохраняются в <span class="mono">exports/</span>.</div>
+
+    <div class="mt-2 flex">
+        <form method="post" action="{{ url_for('export.export_dictionary_csv') }}">
+            <button type="submit">Экспорт словаря (CSV)</button>
+        </form>
+
+        <form method="post" action="{{ url_for('export.export_gold_jsonl') }}">
+            <button type="submit" class="secondary">Экспорт gold-набора (JSONL)</button>
+        </form>
+
+        <form method="post" action="{{ url_for('export.export_corpus_annotations_jsonl') }}">
+            <button type="submit" class="secondary">Экспорт аннотаций корпуса (JSONL)</button>
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-title">Последние файлы</div>
+
+    {% if files|length == 0 %}
+        <div class="text-muted">Выгрузок пока нет.</div>
+    {% else %}
+        <table class="table mt-2">
+            <thead>
+                <tr>
+                    <th>Файл</th>
+                    <th style="width:140px;">Размер</th>
+                    <th style="width:140px;"></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for f in files %}
+                    <tr>
+                        <td class="mono">{{ f.name }}</td>
+                        <td class="text-muted">{{ f.size }} байт</td>
+                        <td>
+                            <a class="tag" href="{{ url_for('export.download_export', name=f.name) }}">Скачать</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+</div>
+{% endblock %}

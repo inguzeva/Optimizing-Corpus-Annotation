@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Отчеты{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-title">Отчеты</div>
+    <div class="text-muted">
+        Это локальные файлы из <span class="mono">reports/</span>. Используйте их для диплома/статьи: метрики, покрытие, история самообучения.
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-title">Доступные отчеты</div>
+
+    {% if files|length == 0 %}
+        <div class="text-muted">Отчеты не найдены.</div>
+    {% else %}
+        <table class="table mt-2">
+            <thead>
+                <tr>
+                    <th>Файл</th>
+                    <th style="width:160px;">Размер</th>
+                    <th style="width:160px;"></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for f in files %}
+                    <tr>
+                        <td class="mono">{{ f.name }}</td>
+                        <td class="text-muted">{{ f.size }} байт</td>
+                        <td>
+                            <a class="tag" href="{{ url_for('reports.download_report', name=f.name) }}">Скачать</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+</div>
+{% endblock %}

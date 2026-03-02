@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Редактирование предложения {{ sent.sent_id }}{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-title">Предложение</div>
+
+    <div class="text-muted">ID: {{ sent.sent_id }}</div>
+    <div class="mt-2">{{ sent.text }}</div>
+
+    <div class="mt-2 flex">
+        <a class="tag" href="{{ url_for('review.review_queue') }}">К очереди</a>
+        <a class="tag" href="{{ url_for('review.review_sentence', sent_id=sent.sent_id) }}">Просмотр проверки</a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-title">Токены (нажмите, чтобы изменить метку)</div>
+    {% include "components/token_grid.html" %}
+</div>
+
+<div class="card">
+    <div class="card-title">Действия</div>
+
+    <form method="post" action="{{ url_for('review.reset_sentence_final', sent_id=sent.sent_id) }}">
+        <button type="submit" class="danger">Очистить финальные метки</button>
+    </form>
+</div>
+{% endblock %}

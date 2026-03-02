@@ -1,0 +1,19 @@
+# NOTE: torch ставь отдельно под свою платформу (CPU/MPS/CUDA)
+# Например на macOS (MPS) обычно:
+# pip install torch torchvision torchaudio
+
+transformers==4.43.4
+datasets==2.21.0
+tokenizers==0.19.1
+accelerate==0.33.0
+
+peft==0.12.0
+safetensors==0.4.4
+
+numpy==1.26.4
+scikit-learn==1.5.2
+
+evaluate==0.4.2
+sacrebleu==2.4.3
+seqeval==1.2.2
+tqdm==4.66.5

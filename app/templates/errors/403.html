@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}403 Доступ запрещен{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-title">403 — Доступ запрещен</div>
+    <div class="text-muted mt-1">
+        У вас нет прав для доступа к этой странице.
+    </div>
+
+    <div class="mt-2">
+        <a class="tag" href="{{ url_for('main.index') }}">На панель</a>
+    </div>
+</div>
+{% endblock %}

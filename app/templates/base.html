@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>{% block title %}Аннотатор малоресурсных языков{% endblock %}</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script defer src="{{ url_for('static', filename='main.js') }}"></script>
+</head>
+<body>
+
+    <div class="navbar">
+        <a href="{{ url_for('main.index') }}">Панель</a>
+        <a href="{{ url_for('entries.list_entries') }}">Словарь</a>
+        <a href="{{ url_for('review.review_queue') }}">Проверка</a>
+        <a href="{{ url_for('export.export_index') }}">Экспорт</a>
+        <a href="{{ url_for('main.diagnostics') }}">Диагностика</a>
+    </div>
+
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash {{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </div>
+
+</body>
+</html>

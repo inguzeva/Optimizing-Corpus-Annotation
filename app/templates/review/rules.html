@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}Правила разметки{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-title">Правила разметки</div>
+    <div class="text-muted">
+        Минимальная схема для этого проекта. Позже можно расширить (POS, MORPH, NER и т.д.).
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-title">Текущие метки</div>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th style="width:180px;">Метка</th>
+                <th>Описание</th>
+                <th style="width:240px;">Когда использовать</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="mono">O</td>
+                <td>Без аннотации</td>
+                <td>По умолчанию для всех токенов</td>
+            </tr>
+            <tr>
+                <td class="mono">LEX</td>
+                <td>Совпадение со словарем / лексическая единица</td>
+                <td>Токен является леммой или частью совпавшей фразы</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="card">
+    <div class="card-title">Практические советы</div>
+    <ul class="example-list">
+        <li>Если сомневаетесь, выбирайте <span class="mono">O</span>.</li>
+        <li>Если weak-метка предлагает LEX, но уверенность низкая, сначала проверьте словарную статью.</li>
+        <li>Используйте «В gold» для предложений, которые вы полностью проверили.</li>
+    </ul>
+</div>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% if data and data.pages and data.pages > 1 %}
+<div class="card">
+    <div class="flex space-between">
+        <div class="text-muted">
+            Страница {{ data.page }} / {{ data.pages }} — всего: {{ data.total }}
+        </div>
+
+        <div class="flex">
+            {% set args = request.args.to_dict() %}
+
+            {% if data.has_prev %}
+                {% set args_prev = args.copy() %}
+                {% set _ = args_prev.update({'page': data.prev_page}) %}
+                <a class="tag" href="{{ url_for(request.endpoint, **args_prev) }}">Назад</a>
+            {% else %}
+                <span class="tag">Назад</span>
+            {% endif %}
+
+            <span class="tag">Стр. {{ data.page }}</span>
+
+            {% if data.has_next %}
+                {% set args_next = args.copy() %}
+                {% set _ = args_next.update({'page': data.next_page}) %}
+                <a class="tag" href="{{ url_for(request.endpoint, **args_next) }}">Вперед</a>
+            {% else %}
+                <span class="tag">Вперед</span>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endif %}

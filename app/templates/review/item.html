@@ -1,0 +1,40 @@
+<div class="card review-item" data-item-id="{{ item.id }}">
+    <div class="flex space-between">
+        <div>
+            <div class="text-muted">
+                <span class="tag">{{ item.item_type }}</span>
+                <span class="tag">оценка {{ '%.3f'|format(item.score or 0) }}</span>
+                <span class="tag">предл. {{ item.sent_id }}</span>
+                {% if item.token_idx is not none %}
+                    <span class="tag">токен #{{ item.token_idx }}</span>
+                {% endif %}
+            </div>
+            <div class="mt-1">{{ sent.text if sent else '' }}</div>
+            {% if item.reason %}
+                <div class="text-muted mt-1">{{ item.reason }}</div>
+            {% endif %}
+        </div>
+
+        <div class="flex">
+            <a class="tag" href="{{ url_for('review.review_sentence', sent_id=item.sent_id) }}">Открыть</a>
+
+            <button type="button" class="secondary"
+                    data-queue-action="skip"
+                    data-item-id="{{ item.id }}">
+                Пропустить
+            </button>
+
+            <button type="button"
+                    data-queue-action="done"
+                    data-item-id="{{ item.id }}">
+                Готово
+            </button>
+
+            <button type="button" class="danger"
+                    data-queue-action="add_to_gold"
+                    data-item-id="{{ item.id }}">
+                В gold
+            </button>
+        </div>
+    </div>
+</div>

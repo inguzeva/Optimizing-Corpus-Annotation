@@ -1,0 +1,30 @@
+{
+  "gold_path": "/Users/mikhailskorobogatov/Desktop/lowresource-annotator/corpora/gold/gold_300.jsonl",
+  "text_only_path": "/Users/mikhailskorobogatov/Desktop/lowresource-annotator/corpora/weak_labels/token_level_labels_text_only.jsonl",
+  "multimodal_path": "/Users/mikhailskorobogatov/Desktop/lowresource-annotator/corpora/weak_labels/token_level_labels_multimodal.jsonl",
+  "text_only": {
+    "tp": 29,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "support": 29,
+    "aligned_tokens": 51
+  },
+  "multimodal": {
+    "tp": 29,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "support": 29,
+    "aligned_tokens": 51
+  },
+  "delta": {
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": 0.0
+  }
+}

@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Очередь проверки{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="flex space-between">
+        <div>
+            <div class="card-title">Очередь проверки</div>
+            <div class="text-muted">
+                Элементы формируются из weak/model-разметки. Сначала проверяйте низкую уверенность.
+            </div>
+        </div>
+
+        <div class="flex">
+            {% set cur = qtype %}
+            <a class="tag {% if cur == 'low_confidence' %}active{% endif %}" href="{{ url_for('review.review_queue', type='low_confidence') }}">Низкая уверенность</a>
+            <a class="tag {% if cur == 'conflict' %}active{% endif %}" href="{{ url_for('review.review_queue', type='conflict') }}">Конфликт</a>
+            <a class="tag {% if cur == 'ambiguity' %}active{% endif %}" href="{{ url_for('review.review_queue', type='ambiguity') }}">Неоднозначность</a>
+            <a class="tag {% if cur == 'pdf_risky' %}active{% endif %}" href="{{ url_for('review.review_queue', type='pdf_risky') }}">Риск PDF</a>
+        </div>
+    </div>
+</div>
+
+{% if items|length == 0 %}
+<div class="card">
+    <div class="text-muted">Очередь пуста.</div>
+</div>
+{% else %}
+    {% for item in items %}
+        {% set sent = sent_map.get(item.sent_id) %}
+        {% include "review/item.html" %}
+    {% endfor %}
+{% endif %}
+
+{% include "components/confirm_modal.html" %}
+{% endblock %}

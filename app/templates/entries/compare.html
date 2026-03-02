@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}Сравнение статьи {{ entry.entry_id }}{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="flex space-between">
+        <div>
+            <div class="card-title">Сравнение — {{ entry.headword_raw }}</div>
+            <div class="text-muted">
+                <span class="tag">ID {{ entry.entry_id }}</span>
+                {% if entry.pos_primary %}<span class="tag">{{ entry.pos_primary }}</span>{% endif %}
+                {% if entry.labels %}<span class="tag">{{ entry.labels }}</span>{% endif %}
+            </div>
+        </div>
+        <div class="flex">
+            <a class="tag" href="{{ url_for('entries.view_entry', entry_id=entry.entry_id) }}">Назад</a>
+        </div>
+    </div>
+</div>
+
+<div class="grid grid-2">
+    <div class="card">
+        <div class="card-title">БД (текущее)</div>
+
+        <div class="text-muted">Лемма</div>
+        <div><b>{{ entry.headword_raw }}</b></div>
+        <div class="text-muted mt-2">POS / метки</div>
+        <div>{{ entry.pos_primary or "—" }}</div>
+        <div class="text-muted">{{ entry.labels or "" }}</div>
+
+        <div class="text-muted mt-2">Сырой текст</div>
+        <pre class="pre">{{ entry.raw_text }}</pre>
+    </div>
+
+    <div class="card">
+        <div class="card-title">Снимок очищенного CSV</div>
+
+        {% if snapshot %}
+            <div class="text-muted">Лемма</div>
+            <div><b>{{ snapshot.headword_raw }}</b></div>
+            <div class="text-muted mt-2">POS / метки</div>
+            <div>{{ snapshot.pos_primary or "—" }}</div>
+            <div class="text-muted">{{ snapshot.labels or "" }}</div>
+
+            <div class="text-muted mt-2">Сырой текст</div>
+            <pre class="pre">{{ snapshot.raw_text }}</pre>
+        {% else %}
+            <div class="text-muted">Для этой статьи снимок в очищенном CSV не найден.</div>
+        {% endif %}
+    </div>
+</div>
+
+{% if diffs %}
+<div class="card">
+    <div class="card-title">Найденные различия</div>
+    <ul class="example-list">
+        {% for d in diffs %}
+            <li>
+                <span class="tag">{{ d.field }}</span>
+                <span class="text-muted">{{ d.note }}</span>
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+{% endblock %}

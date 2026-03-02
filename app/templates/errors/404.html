@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}404 Страница не найдена{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-title">404 — Страница не найдена</div>
+    <div class="text-muted mt-1">
+        Страница, которую вы ищете, не существует.
+    </div>
+
+    <div class="mt-2">
+        <a class="tag" href="{{ url_for('main.index') }}">На панель</a>
+    </div>
+</div>
+{% endblock %}

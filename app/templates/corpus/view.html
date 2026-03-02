@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}Статья {{ entry.entry_id }}{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="flex space-between">
+        <div>
+            <div class="card-title">{{ entry.headword_raw }} {% if entry.homonym_roman %}<span class="text-muted">{{ entry.homonym_roman }}</span>{% endif %}</div>
+            <div class="text-muted">
+                <span class="tag">{{ entry.pos_primary or "—" }}</span>
+                {% if entry.labels %}<span class="tag">{{ entry.labels }}</span>{% endif %}
+            </div>
+        </div>
+
+        <div class="flex">
+            <a class="tag" href="{{ url_for('entries.edit_entry', entry_id=entry.entry_id) }}">Редактировать</a>
+            <a class="tag" href="{{ url_for('entries.list_entries') }}">Назад</a>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-title">Значения</div>
+
+    {% if senses|length == 0 %}
+        <div class="text-muted">Значения не распознаны.</div>
+    {% else %}
+        <ol class="sense-list">
+            {% for s in senses %}
+                <li class="sense-item">
+                    <div class="sense-head">
+                        <span class="tag">#{{ s.sense_id }}</span>
+                        {% if s.sense_group and s.sense_group != 'none' %}
+                            <span class="tag">{{ s.sense_group }}</span>
+                        {% endif %}
+                        {% if s.confidence_parse %}
+                            <span class="tag">доверие {{ s.confidence_parse }}</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="mt-1">{{ s.gloss_ru }}</div>
+
+                    {% set exs = examples_by_sense.get(s.sense_id, []) %}
+                    {% if exs and exs|length > 0 %}
+                        <div class="mt-2 text-muted">Примеры:</div>
+                        <ul class="example-list">
+                            {% for ex in exs %}
+                                <li>
+                                    <span class="mono">{{ ex.example_alt_raw }}</span>
+                                    <span class="text-muted">—</span>
+                                    <span>{{ ex.example_ru }}</span>
+                                    {% if ex.source_note %}
+                                        <span class="tag">{{ ex.source_note }}</span>
+                                    {% endif %}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ol>
+    {% endif %}
+</div>
+
+{% if phrases and phrases|length > 0 %}
+<div class="card">
+    <div class="card-title">Фразы (♦)</div>
+    <ul class="example-list">
+        {% for p in phrases %}
+            <li>
+                <span class="mono">{{ p.phrase_alt_raw }}</span>
+                {% if p.phrase_ru %}
+                    <span class="text-muted">—</span>
+                    <span>{{ p.phrase_ru }}</span>
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+
+<div class="card">
+    <div class="card-title">Сырой текст</div>
+    <pre class="pre">{{ entry.raw_text }}</pre>
+</div>
+
+{% endblock %}

@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}Словарь{% endblock %}
+
+{% block content %}
+{% include "components/searchbar.html" %}
+
+<div class="card">
+    <div class="card-title">Результаты</div>
+
+    {% if data.total == 0 %}
+        <div class="text-muted">Ничего не найдено.</div>
+    {% else %}
+        <div class="text-muted">
+            Показано {{ data.items|length }} из {{ data.total }}
+        </div>
+
+        <table class="table mt-2">
+            <thead>
+                <tr>
+                    <th style="width: 120px;">ID</th>
+                    <th>Лемма</th>
+                    <th style="width: 120px;">POS</th>
+                    <th style="width: 120px;">Значения</th>
+                    <th style="width: 120px;">Фразы</th>
+                    <th style="width: 120px;">Примеры</th>
+                    <th style="width: 120px;"></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for e in data.items %}
+                    <tr>
+                        <td>{{ e.entry_id }}</td>
+                        <td>
+                            <div><b>{{ e.headword_raw }}</b></div>
+                            <div class="text-muted">{{ e.labels }}</div>
+                        </td>
+                        <td>{{ e.pos_primary }}</td>
+                        <td>{{ e.senses_count }}</td>
+                        <td>{{ e.phrases_count }}</td>
+                        <td>{{ e.examples_count }}</td>
+                        <td>
+                            <a class="tag" href="{{ url_for('entries.view_entry', entry_id=e.entry_id) }}">Открыть</a>
+                            <a class="tag" href="{{ url_for('entries.edit_entry', entry_id=e.entry_id) }}">Редактировать</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+</div>
+
+{% include "components/pagination.html" %}
+{% endblock %}

@@ -1,0 +1,48 @@
+<form method="get" class="card">
+    <div class="card-title">Поиск</div>
+
+    <div class="flex">
+        <div style="flex:1;">
+            <label for="q">Лемма</label>
+            <input id="q" name="q" type="text" value="{{ q or '' }}" placeholder="например: ай">
+        </div>
+
+        <div style="flex:1;">
+            <label for="gq">Русская глосса</label>
+            <input id="gq" name="gq" type="text" value="{{ gq or '' }}" placeholder="например: вода, идти">
+        </div>
+    </div>
+
+    <div class="mt-2 flex">
+        <div style="width:220px;">
+            <label for="phrases">Есть фразы</label>
+            <select id="phrases" name="phrases">
+                <option value="" {% if phrases == '' %}selected{% endif %}>Любые</option>
+                <option value="1" {% if phrases == '1' %}selected{% endif %}>Да</option>
+                <option value="0" {% if phrases == '0' %}selected{% endif %}>Нет</option>
+            </select>
+        </div>
+
+        <div style="width:220px;">
+            <label for="examples">Есть примеры</label>
+            <select id="examples" name="examples">
+                <option value="" {% if examples == '' %}selected{% endif %}>Любые</option>
+                <option value="1" {% if examples == '1' %}selected{% endif %}>Да</option>
+                <option value="0" {% if examples == '0' %}selected{% endif %}>Нет</option>
+            </select>
+        </div>
+
+        <div style="width:220px;">
+            <label for="min_senses">Мин. значений</label>
+            <input id="min_senses" name="min_senses" type="text" value="{{ min_senses or '' }}" placeholder="например: 3">
+        </div>
+
+        <div style="align-self:end;">
+            <button type="submit">Найти</button>
+        </div>
+    </div>
+
+    <div class="mt-2 text-muted">
+        Подсказка: оставьте поля пустыми, чтобы просмотреть весь словарь.
+    </div>
+</form>

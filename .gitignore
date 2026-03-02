@@ -1,0 +1,47 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+
+# Virtual environment
+.venv/
+venv/
+env/
+
+# Cache directories
+.cache/
+.hf/
+.ipynb_checkpoints/
+
+# Data 
+data/raw/
+data/interim/
+data/db/
+data/processed/parsed/
+!data/processed/clean/*_sample.csv   
+
+# Models
+models/
+
+# Exports
+exports/
+
+# Large binary files
+*.pdf
+*.zip
+*.tar.gz
+*.sqlite
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db

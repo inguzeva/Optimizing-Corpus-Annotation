@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block title %}Панель{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-title">Статистика словаря</div>
+
+    <div class="flex space-between mt-2">
+        <div>
+            <div><b>Статьи:</b> {{ stats.counts.entries }}</div>
+            <div><b>Значения:</b> {{ stats.counts.senses }}</div>
+            <div><b>Фразы:</b> {{ stats.counts.phrases }}</div>
+            <div><b>Примеры:</b> {{ stats.counts.examples }}</div>
+        </div>
+
+        <div>
+            <div><b>С POS:</b> {{ stats.coverage.with_pos }} ({{ stats.coverage_pct.with_pos }}%)</div>
+            <div><b>С метками:</b> {{ stats.coverage.with_labels }} ({{ stats.coverage_pct.with_labels }}%)</div>
+            <div><b>С фразами:</b> {{ stats.coverage.with_phrases }} ({{ stats.coverage_pct.with_phrases }}%)</div>
+            <div><b>С примерами:</b> {{ stats.coverage.with_examples }} ({{ stats.coverage_pct.with_examples }}%)</div>
+            <div><b>Многозначные:</b> {{ stats.coverage.multi_sense }} ({{ stats.coverage_pct.multi_sense }}%)</div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-title">Состояние базы данных (SQLite)</div>
+
+    {% if db_counts.error %}
+        <div class="text-muted">База данных пока не инициализирована.</div>
+    {% else %}
+        <div class="flex space-between mt-2">
+            <div>
+                <div><b>Статьи:</b> {{ db_counts.entries }}</div>
+                <div><b>Значения:</b> {{ db_counts.senses }}</div>
+                <div><b>Фразы:</b> {{ db_counts.phrases }}</div>
+                <div><b>Примеры:</b> {{ db_counts.examples }}</div>
+                <div><b>Сокращения/метки:</b> {{ db_counts.abbr_labels }}</div>
+                <div><b>PDF-признаки:</b> {{ db_counts.entry_pdf_features }}</div>
+            </div>
+
+            <div>
+                <div><b>Предложения корпуса:</b> {{ db_counts.corpus_sentences }}</div>
+                <div><b>Аннотации токенов:</b> {{ db_counts.token_annotations }}</div>
+                <div><b>Элементы ревью (открытые):</b> {{ db_counts.review_items_open }}</div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+<div class="card">
+    <div class="card-title">Админ-действия</div>
+
+    <form method="post" action="{{ url_for('main.admin_import_dictionary') }}">
+        <button type="submit">Импортировать очищенный CSV + dopslovar.txt → БД</button>
+    </form>
+
+    <div class="mt-2"></div>
+
+    <form method="post" action="{{ url_for('main.admin_import_weak_labels') }}">
+        <button type="submit" class="secondary">Импортировать слабую разметку (JSONL) → БД</button>
+    </form>
+
+    <div class="mt-2"></div>
+
+    <form method="post" action="{{ url_for('main.admin_import_model_predictions') }}">
+        <div class="flex">
+            <div style="width: 420px;">
+                <label for="pred_path">Путь к JSONL с предсказаниями модели</label>
+                <input id="pred_path" name="pred_path" type="text" value="corpora/weak_labels/model_predictions.jsonl">
+            </div>
+            <div style="align-self: end;">
+                <button type="submit" class="secondary">Импортировать предсказания модели → БД</button>
+            </div>
+        </div>
+    </form>
+
+    <div class="mt-2"></div>
+
+    <form method="post" action="{{ url_for('main.admin_build_review_queue') }}">
+        <div class="flex">
+            <div style="width: 220px;">
+                <label for="conf_low">Порог низкой уверенности</label>
+                <input id="conf_low" name="conf_low" type="text" value="{{ config.get('CONFIDENCE_LOW', 0.4) }}">
+            </div>
+
+            <div style="width: 220px;">
+                <label for="conf_mid">Порог средней уверенности</label>
+                <input id="conf_mid" name="conf_mid" type="text" value="{{ config.get('CONFIDENCE_MID', 0.65) }}">
+            </div>
+
+            <div style="width: 220px;">
+                <label for="conf_pdf">Порог низкой PDF-уверенности</label>
+                <input id="conf_pdf" name="conf_pdf" type="text" value="{{ config.get('CONFIDENCE_PDF_LOW', 0.45) }}">
+            </div>
+
+            <div style="width: 180px;">
+                <label for="limit">Лимит</label>
+                <input id="limit" name="limit" type="text" value="5000">
+            </div>
+
+            <div style="align-self: end;">
+                <label style="font-weight: normal;"><input name="include_conflict" type="checkbox" value="1" checked> Конфликты</label>
+                <label style="font-weight: normal;"><input name="include_ambiguity" type="checkbox" value="1" checked> Неоднозначность</label>
+                <label style="font-weight: normal;"><input name="include_pdf_risky" type="checkbox" value="1" checked> Риск по PDF</label>
+            </div>
+
+            <div style="align-self: end;">
+                <button type="submit">Собрать очередь ревью</button>
+            </div>
+        </div>
+    </form>
+
+    <div class="mt-2"></div>
+
+    <form method="post" action="{{ url_for('main.admin_reset_review_queue') }}">
+        <button type="submit" class="danger">Очистить очередь ревью</button>
+    </form>
+</div>
+
+{% endblock %}

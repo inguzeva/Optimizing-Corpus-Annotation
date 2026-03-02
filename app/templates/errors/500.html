@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}500 Ошибка сервера{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-title">500 — Ошибка сервера</div>
+    <div class="text-muted mt-1">
+        На сервере произошла ошибка.
+    </div>
+
+    <div class="mt-2">
+        <a class="tag" href="{{ url_for('main.index') }}">На панель</a>
+    </div>
+</div>
+{% endblock %}

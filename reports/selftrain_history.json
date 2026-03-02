@@ -1,0 +1,38 @@
+[
+  {
+    "iter": 1,
+    "selected_sentences": 1,
+    "train_size": 66,
+    "metrics": {
+      "eval_loss": 0.18390746414661407,
+      "eval_precision": 1.0,
+      "eval_recall": 1.0,
+      "eval_f1": 1.0,
+      "eval_accuracy": 1.0,
+      "eval_runtime": 0.038,
+      "eval_samples_per_second": 157.85,
+      "eval_steps_per_second": 26.308,
+      "epoch": 2.0
+    },
+    "model_dir": "/Users/mikhailskorobogatov/Desktop/lowresource-annotator/models/selftrain_iter_1",
+    "pseudo_selected_path": "/Users/mikhailskorobogatov/Desktop/lowresource-annotator/corpora/weak_labels/pseudo_iter_1.jsonl"
+  },
+  {
+    "iter": 2,
+    "selected_sentences": 5,
+    "train_size": 70,
+    "metrics": {
+      "eval_loss": 0.5160117745399475,
+      "eval_precision": 0.3333333333333333,
+      "eval_recall": 0.2,
+      "eval_f1": 0.25,
+      "eval_accuracy": 0.75,
+      "eval_runtime": 0.0366,
+      "eval_samples_per_second": 191.158,
+      "eval_steps_per_second": 27.308,
+      "epoch": 2.0
+    },
+    "model_dir": "/Users/mikhailskorobogatov/Desktop/lowresource-annotator/models/selftrain_iter_2",
+    "pseudo_selected_path": "/Users/mikhailskorobogatov/Desktop/lowresource-annotator/corpora/weak_labels/pseudo_iter_2.jsonl"
+  }
+]

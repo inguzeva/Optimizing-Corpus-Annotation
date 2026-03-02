@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}Редактирование статьи {{ entry.entry_id }}{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="flex space-between">
+        <div>
+            <div class="card-title">Редактирование — {{ entry.headword_raw }}</div>
+            <div class="text-muted">
+                <span class="tag">ID {{ entry.entry_id }}</span>
+            </div>
+        </div>
+        <div class="flex">
+            <a class="tag" href="{{ url_for('entries.view_entry', entry_id=entry.entry_id) }}">Назад</a>
+            <a class="tag" href="{{ url_for('entries.list_entries') }}">К списку</a>
+        </div>
+    </div>
+</div>
+
+<form method="post" class="card">
+    <div class="card-title">Основные поля</div>
+
+    <div class="grid grid-2">
+        <div>
+            <label for="headword_raw">Лемма</label>
+            <input id="headword_raw" name="headword_raw" type="text" value="{{ entry.headword_raw }}">
+        </div>
+
+        <div>
+            <label for="homonym_roman">Омоним</label>
+            <input id="homonym_roman" name="homonym_roman" type="text" value="{{ entry.homonym_roman }}">
+        </div>
+
+        <div>
+            <label for="pos_primary">POS</label>
+            <input id="pos_primary" name="pos_primary" type="text" value="{{ entry.pos_primary }}">
+        </div>
+
+        <div>
+            <label for="labels">Метки</label>
+            <input id="labels" name="labels" type="text" value="{{ entry.labels }}">
+        </div>
+    </div>
+
+    <div class="mt-2">
+        <label for="raw_text">Сырой текст</label>
+        <textarea id="raw_text" name="raw_text" rows="16">{{ entry.raw_text }}</textarea>
+        <div class="text-muted mt-1">Редактируйте аккуратно: по этому полю можно заново пересобрать значения.</div>
+    </div>
+
+    <div class="mt-2 flex">
+        <button type="submit">Сохранить</button>
+        <a class="tag" href="{{ url_for('entries.view_entry', entry_id=entry.entry_id) }}">Отмена</a>
+    </div>
+</form>
+{% endblock %}

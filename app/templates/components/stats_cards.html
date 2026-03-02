@@ -1,0 +1,51 @@
+<div class="grid grid-4">
+    <div class="card">
+        <div class="card-title">Статьи</div>
+        <div class="big-number">{{ stats.counts.entries }}</div>
+        <div class="text-muted">Всего словарных статей</div>
+    </div>
+
+    <div class="card">
+        <div class="card-title">Значения</div>
+        <div class="big-number">{{ stats.counts.senses }}</div>
+        <div class="text-muted">Всего значений</div>
+    </div>
+
+    <div class="card">
+        <div class="card-title">Фразы</div>
+        <div class="big-number">{{ stats.counts.phrases }}</div>
+        <div class="text-muted">Фразовые блоки (♦)</div>
+    </div>
+
+    <div class="card">
+        <div class="card-title">Примеры</div>
+        <div class="big-number">{{ stats.counts.examples }}</div>
+        <div class="text-muted">Примеры ALT — RU</div>
+    </div>
+</div>
+
+<div class="grid grid-4 mt-2">
+    <div class="card">
+        <div class="card-title">С POS</div>
+        <div class="big-number">{{ stats.coverage_pct.with_pos }}%</div>
+        <div class="text-muted">{{ stats.coverage.with_pos }} статей</div>
+    </div>
+
+    <div class="card">
+        <div class="card-title">С метками</div>
+        <div class="big-number">{{ stats.coverage_pct.with_labels }}%</div>
+        <div class="text-muted">{{ stats.coverage.with_labels }} статей</div>
+    </div>
+
+    <div class="card">
+        <div class="card-title">С фразами</div>
+        <div class="big-number">{{ stats.coverage_pct.with_phrases }}%</div>
+        <div class="text-muted">{{ stats.coverage.with_phrases }} статей</div>
+    </div>
+
+    <div class="card">
+        <div class="card-title">С примерами</div>
+        <div class="big-number">{{ stats.coverage_pct.with_examples }}%</div>
+        <div class="text-muted">{{ stats.coverage.with_examples }} статей</div>
+    </div>
+</div>
