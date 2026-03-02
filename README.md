@@ -1,4 +1,4 @@
-# lowresource-annotator
+# Optimizing Corpus Annotation for Low-Resource Languages Using Multimodal Data and Machine Learning
 
 Pipeline to convert a large dictionary PDF into structured CSVs and use them for weak labeling, self-training, and QA via a small web app.
 
