@@ -44,7 +44,10 @@ jobs:
           pip install -r requirements/ml.txt
           pip install -r requirements/parse.txt
           pip install -r requirements/web.txt
-          pip install pytest
+          pip install pytest pdfplumber PyMuPDF pandas rapidfuzz
+
+      - name: Настройка PYTHONPATH
+        run: echo "PYTHONPATH=$PWD" >> $GITHUB_ENV
 
       - name: Запуск тестов
         run: pytest
