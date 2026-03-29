@@ -45,7 +45,7 @@ jobs:
           pip install -r requirements/parse.txt
           pip install -r requirements/web.txt
           # Дополнительные пакеты для скриптов и app
-          pip install pytest flask sqlalchemy PyYAML pdfplumber PyMuPDF pandas rapidfuzz
+          pip install pytest flask sqlalchemy flask_sqlalchemy PyYAML pdfplumber PyMuPDF pandas rapidfuzz
 
       - name: Настройка PYTHONPATH
         run: echo "PYTHONPATH=$PWD" >> $GITHUB_ENV
