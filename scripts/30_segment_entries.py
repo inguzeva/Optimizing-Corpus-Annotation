@@ -204,6 +204,7 @@ def main() -> int:
 
     with open(diag_path, "w", encoding="utf-8") as f:
         json.dump(stats, f, ensure_ascii=False, indent=2)
+
     print(f"[OK] Saved entries: {out_path}")
     print(f"[OK] Segment stats: {diag_path}")
     print(f"[INFO] entries_total={stats['entries_total']} start_lines_detected={stats['start_lines_detected']} pages={stats['pages_total']}")

@@ -3,13 +3,13 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
-from typing import Dict, Tuple
+from typing import Dict, Iterable, Optional, Tuple
 
 
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def _read_jsonl(path: Path):
+def _read_jsonl(path: Path) -> Iterable[dict]:
     with open(path, "r", encoding="utf-8") as f:
         for line in f:
             line = line.strip()
@@ -21,8 +21,10 @@ def _read_jsonl(path: Path):
 def load_gold(path: Path) -> Dict[Tuple[str, int], str]:
     out: Dict[Tuple[str, int], str] = {}
     for obj in _read_jsonl(path):
-        sent_id = str(obj.get("sent_id", ""))
+        sent_id = str(obj.get("sent_id", "")).strip()
         for tok in obj.get("tokens") or []:
+            if not isinstance(tok, dict):
+                continue
             idx = int(tok.get("token_idx", 0))
             lbl = str(tok.get("label") or "O")
             out[(sent_id, idx)] = lbl
@@ -32,21 +34,65 @@ def load_gold(path: Path) -> Dict[Tuple[str, int], str]:
 def load_pred(path: Path) -> Dict[Tuple[str, int], str]:
     out: Dict[Tuple[str, int], str] = {}
     for obj in _read_jsonl(path):
-        sent_id = str(obj.get("sent_id", ""))
-        token_labels = obj.get("token_labels") or []
-        for i, row in enumerate(token_labels):
-            if isinstance(row, dict):
-                lbl = str(row.get("label") or "O")
-            else:
-                lbl = "O"
-            out[(sent_id, i)] = lbl
+        sent_id = str(obj.get("sent_id", "")).strip()
+        if not sent_id:
+            continue
+
+        pred = obj.get("pred")
+        if isinstance(pred, list):
+            for i, row in enumerate(pred):
+                if isinstance(row, dict):
+                    lbl = str(row.get("label") or "O")
+                else:
+                    lbl = "O"
+                out[(sent_id, i)] = lbl
+            continue
+
+        token_labels = obj.get("token_labels")
+        if isinstance(token_labels, list):
+            for i, row in enumerate(token_labels):
+                if isinstance(row, dict):
+                    lbl = str(row.get("label") or "O")
+                else:
+                    lbl = "O"
+                out[(sent_id, i)] = lbl
+            continue
+
+        tokens = obj.get("tokens")
+        if isinstance(tokens, list) and tokens and isinstance(tokens[0], dict):
+            for i, row in enumerate(tokens):
+                if not isinstance(row, dict):
+                    continue
+                idx = int(row.get("token_idx", i))
+                lbl = str(row.get("label") or row.get("model_label") or "O")
+                out[(sent_id, idx)] = lbl
+            continue
+
+        labels = obj.get("labels")
+        if isinstance(labels, list):
+            for i, lbl in enumerate(labels):
+                out[(sent_id, i)] = str(lbl or "O")
+            continue
+
     return out
 
 
-def compute_binary_lex_metrics(gold: Dict[Tuple[str, int], str], pred: Dict[Tuple[str, int], str]) -> dict:
+def compute_binary_lex_metrics(
+    gold: Dict[Tuple[str, int], str],
+    pred: Dict[Tuple[str, int], str],
+) -> dict:
     keys = set(gold.keys()) & set(pred.keys())
     if not keys:
-        return {"tp": 0, "fp": 0, "fn": 0, "precision": 0.0, "recall": 0.0, "f1": 0.0, "support": 0}
+        return {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 0,
+            "aligned_tokens": 0,
+        }
 
     tp = 0
     fp = 0
@@ -79,17 +125,73 @@ def compute_binary_lex_metrics(gold: Dict[Tuple[str, int], str], pred: Dict[Tupl
     }
 
 
-def main() -> int:
-    parser = argparse.ArgumentParser(description="Compare text-only and text+pdf weak modes on gold labels.")
-    parser.add_argument("--gold", default="corpora/gold/gold_300.jsonl")
-    parser.add_argument("--text-only", dest="text_only", default="corpora/weak_labels/token_level_labels_text_only.jsonl")
-    parser.add_argument("--multimodal", default="corpora/weak_labels/token_level_labels_multimodal.jsonl")
+def compute_majority_o_baseline(gold: Dict[Tuple[str, int], str]) -> dict:
+    support = sum(1 for lbl in gold.values() if lbl != "O")
+    return {
+        "tp": 0,
+        "fp": 0,
+        "fn": support,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": support,
+        "aligned_tokens": len(gold),
+    }
+
+
+def _delta(a: Optional[dict], b: Optional[dict]) -> Optional[dict]:
+    if not a or not b:
+        return None
+    return {
+        "precision": round(a.get("precision", 0.0) - b.get("precision", 0.0), 6),
+        "recall": round(a.get("recall", 0.0) - b.get("recall", 0.0), 6),
+        "f1": round(a.get("f1", 0.0) - b.get("f1", 0.0), 6),
+    }
+
+
+def _load_optional(path: Path) -> Optional[Dict[Tuple[str, int], str]]:
+    if not path.exists():
+        return None
+    return load_pred(path)
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Compare weak modes, ML model and external baseline on gold labels."
+    )
+    parser.add_argument("--gold", default="corpora/gold/gold_independent_65.jsonl")
+    parser.add_argument(
+        "--text-only",
+        dest="text_only",
+        default="corpora/weak_labels/token_level_labels_text_only.jsonl",
+    )
+    parser.add_argument(
+        "--multimodal",
+        default="corpora/weak_labels/token_level_labels_multimodal.jsonl",
+    )
+    parser.add_argument(
+        "--model",
+        default="corpora/weak_labels/model_predictions.jsonl",
+        help="Predictions from local ML model.",
+    )
+    parser.add_argument(
+        "--external-baseline",
+        dest="external_baseline",
+        default="corpora/weak_labels/external_baseline_predictions.jsonl",
+        help="Predictions from external baseline model.",
+    )
     parser.add_argument("--out", default="reports/mode_comparison.json")
-    args = parser.parse_args()
+    return parser.parse_args()
+
+
+def main() -> int:
+    args = parse_args()
 
     gold_path = ROOT / args.gold
     text_only_path = ROOT / args.text_only
     multimodal_path = ROOT / args.multimodal
+    model_path = ROOT / args.model
+    external_path = ROOT / args.external_baseline
     out_path = ROOT / args.out
     out_path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -106,20 +208,33 @@ def main() -> int:
     gold = load_gold(gold_path)
     pred_text = load_pred(text_only_path)
     pred_mm = load_pred(multimodal_path)
+    pred_model = _load_optional(model_path)
+    pred_external = _load_optional(external_path)
 
     m_text = compute_binary_lex_metrics(gold, pred_text)
     m_mm = compute_binary_lex_metrics(gold, pred_mm)
+    m_model = compute_binary_lex_metrics(gold, pred_model) if pred_model is not None else None
+    m_external = compute_binary_lex_metrics(gold, pred_external) if pred_external is not None else None
+    m_majority_o = compute_majority_o_baseline(gold)
 
     report = {
         "gold_path": str(gold_path),
         "text_only_path": str(text_only_path),
         "multimodal_path": str(multimodal_path),
+        "model_path": str(model_path) if model_path.exists() else None,
+        "external_baseline_path": str(external_path) if external_path.exists() else None,
         "text_only": m_text,
         "multimodal": m_mm,
+        "model": m_model,
+        "external_baseline": m_external,
+        "majority_o_baseline": m_majority_o,
         "delta": {
-            "precision": round(m_mm["precision"] - m_text["precision"], 6),
-            "recall": round(m_mm["recall"] - m_text["recall"], 6),
-            "f1": round(m_mm["f1"] - m_text["f1"], 6),
+            "multimodal_minus_text_only": _delta(m_mm, m_text),
+            "model_minus_multimodal": _delta(m_model, m_mm),
+            "model_minus_text_only": _delta(m_model, m_text),
+            "model_minus_external": _delta(m_model, m_external),
+            "external_minus_majority_o": _delta(m_external, m_majority_o),
+            "model_minus_majority_o": _delta(m_model, m_majority_o),
         },
     }
 
@@ -128,7 +243,10 @@ def main() -> int:
 
     print("[OK] Mode comparison complete.")
     print(f"[OK] saved: {out_path}")
-    print(f"[INFO] text-only f1={m_text['f1']} multimodal f1={m_mm['f1']} delta={report['delta']['f1']}")
+    print(
+        f"[INFO] f1 text-only={m_text['f1']} multimodal={m_mm['f1']} "
+        f"model={m_model['f1'] if m_model else 'n/a'} external={m_external['f1'] if m_external else 'n/a'}"
+    )
     return 0
 
 

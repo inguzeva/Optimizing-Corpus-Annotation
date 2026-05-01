@@ -17,21 +17,14 @@ env/
 .hf/
 .ipynb_checkpoints/
 
-# Data 
-data/raw/
-data/interim/
-data/db/
-data/processed/parsed/
-!data/processed/clean/*_sample.csv   
-
 # Models
 models/
 
 # Exports
 exports/
+reports/
 
 # Large binary files
-*.pdf
 *.zip
 *.tar.gz
 *.sqlite

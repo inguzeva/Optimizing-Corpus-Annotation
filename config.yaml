@@ -1,8 +1,26 @@
-# ============================================
-# ОСНОВНЫЕ НАСТРОЙКИ PDF
-# ============================================
+corpus:
+  path: corpora/input/corpus.txt
+  hf_dataset: Lil-Graver/small-altai-corpus
+  hf_jsonl_path: corpora/input/small_altai_corpus.jsonl
+  merged_jsonl_path: corpora/input/corpus.jsonl
+  merged_txt_path: corpora/input/corpus.txt
 
-pdf:
-  path: "словарь для модели.pdf"        # Имя файла PDF
-  page_start: 14                        # !!! ВАЖНО: 0-based индекс!
-  page_end: 935                        # последняя страница (0-based)
+CORPUS_PATH: corpora/input/corpus.txt
+
+WEAK_MODE: text+pdf
+WEAK_PDF_WEIGHT: 0.30
+WEAK_TOKEN_LABELS_PATH: corpora/weak_labels/token_level_labels.jsonl
+
+SELFTRAIN_BASE_MODEL_DIR: models/tagger_lite
+SELFTRAIN_ITERS: 1
+SELFTRAIN_THRESHOLD: 0.85
+SELFTRAIN_MIN_LEX_RATIO: 0.05
+
+TAGGER_MODEL_NAME: bert-base-multilingual-cased
+TAGGER_EPOCHS: 1
+TAGGER_BATCH_SIZE: 4
+TAGGER_LR: 5.0e-5
+TAGGER_EVAL_RATIO: 0.1
+TAGGER_MAX_LEN: 128
+
+SEED: 42
